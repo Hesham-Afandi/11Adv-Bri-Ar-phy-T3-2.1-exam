@@ -1,1 +1,546 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔄 Grade 11 Advanced Inspire - Circular Motion (2.1)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        body.en-mode { font-family: 'Inter', sans-serif; }
+        .correct { background-color: #dcfce7 !important; border-color: #16a34a !important; }
+        .incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; }
+        .formula { font-family: 'Times New Roman', serif; font-style: italic; direction: ltr; display: inline-block; }
+        .timer-warning { color: #dc2626 !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 50% { opacity: 0.7; } }
+        @media print { .no-print { display: none !important; } }
+        .success-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.875rem; }
+        .grade-excellent { background: #dcfce7; color: #166534; }
+        .grade-good { background: #fef3c7; color: #92400e; }
+        .grade-pass { background: #dbeafe; color: #1e40af; }
+        .grade-fail { background: #fee2e2; color: #991b1b; }
+        .lang-switch {
+            position: fixed; top: 16px; left: 16px; z-index: 100;
+            background: white; padding: 6px; border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px;
+            border: 2px solid #0d9488;
+        }
+        [dir="ltr"] .lang-switch { left: auto; right: 16px; }
+        .lang-btn {
+            padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold;
+            transition: all 0.3s; border: none; font-size: 0.875rem;
+            background: transparent; color: #6b7280;
+        }
+        .lang-btn.active { background: #0d9488; color: white; box-shadow: 0 2px 6px rgba(13,148,136,0.4); }
+        .lang-btn:hover:not(.active) { background: #f0fdfa; color: #0d9488; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 p-4 md:p-8 min-h-screen">
 
+    <div class="lang-switch no-print">
+        <button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
+        <button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
+    </div>
+
+    <div id="timer-container" class="max-w-4xl mx-auto mb-4 text-center no-print">
+        <div class="bg-white p-4 rounded-xl shadow-md inline-block border-2 border-teal-100">
+            <span class="text-gray-600 ml-2" data-ar="⏱️ الوقت المتبقي:" data-en="⏱️ Time Remaining:">⏱️ الوقت المتبقي:</span>
+            <span id="timer" class="text-2xl font-bold text-teal-600 font-mono">60:00</span>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
+        <button onclick="toggleAnswers()" class="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer" data-ar="👁️ إظهار / إخفاء الإجابات" data-en="👁️ Show / Hide Answers">👁️ إظهار / إخفاء الإجابات</button>
+        <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-900 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer" data-ar="🖨️ طباعة / PDF" data-en="🖨️ Print / PDF">🖨️ طباعة / PDF</button>
+    </div>
+
+    <header class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md mb-8 border-r-4 border-teal-600">
+        <div class="text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2" data-ar="🔄 فيزياء الصف الحادي عشر متقدم - Inspire" data-en="🔄 Grade 11 Advanced Physics - Inspire">🔄 فيزياء الصف الحادي عشر متقدم - Inspire</h1>
+            <h2 class="text-lg text-teal-600 font-semibold" data-ar="الدرس 2.1: الحركة الدائرية" data-en="Lesson 2.1: Circular Motion">الدرس 2.1: الحركة الدائرية</h2>
+            <p class="text-sm text-gray-600 mt-2" data-ar="الإزاحة الزاوية، السرعة الزاوية، العجلة المركزية والمماسية" data-en="Angular Displacement, Angular Velocity, Centripetal & Tangential Acceleration">الإزاحة الزاوية، السرعة الزاوية، العجلة المركزية والمماسية</p>
+        </div>
+        <div class="mt-4 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+            <span><span data-ar="📅 التاريخ:" data-en="📅 Date:">📅 التاريخ:</span> <input type="text" class="border-b border-gray-400 bg-transparent w-28 text-center"></span>
+            <span><span data-ar="👤 الاسم:" data-en="👤 Name:">👤 الاسم:</span> <input type="text" id="studentName" class="border-b border-gray-400 bg-transparent w-32 text-center" placeholder="Enter name"></span>
+            <span><span data-ar="🏫 الشعبة:" data-en="🏫 Class:">🏫 الشعبة:</span> <input type="text" id="studentClass" class="border-b border-gray-400 bg-transparent w-28 text-center" placeholder="Class"></span>
+            <span><span data-ar="⏱️ المدة: 60 دقيقة" data-en="⏱️ Duration: 60 min">⏱️ المدة: 60 دقيقة</span></span>
+            <span><span data-ar="📊 المجموع: 100 درجة" data-en="📊 Total: 100 pts">📊 المجموع: 100 درجة</span></span>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto space-y-8" id="exam-content"></main>
+
+    <div class="text-center no-print pb-8 mt-8">
+        <button onclick="gradeExam()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-lg px-10 py-4 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="📝 تسليم وتصحيح الامتحان" data-en="📝 Submit & Grade Exam">📝 تسليم وتصحيح الامتحان</button>
+    </div>
+
+    <div id="results-panel" class="max-w-4xl mx-auto mt-8 bg-white p-8 rounded-2xl shadow-2xl border-t-4 border-emerald-500 hidden no-print">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center" data-ar="📊 نتائج الامتحان" data-en="📊 Exam Results">📊 نتائج الامتحان</h2>
+        <div class="grid md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-blue-50 p-4 rounded-xl text-center"><p data-ar="اسم الطالب" data-en="Student Name">اسم الطالب</p><p id="res-name" class="font-bold text-xl text-teal-700">-</p></div>
+            <div class="bg-purple-50 p-4 rounded-xl text-center"><p data-ar="التاريخ" data-en="Date">التاريخ</p><p id="res-date" class="font-bold text-xl text-purple-700">-</p></div>
+            <div class="bg-emerald-50 p-4 rounded-xl text-center"><p data-ar="المجموع" data-en="Score">المجموع</p><p id="res-total" class="font-bold text-3xl text-emerald-600">0 / 100</p></div>
+        </div>
+        <div class="text-center mb-6">
+            <span id="success-badge" class="success-badge grade-excellent">-</span>
+            <p id="success-percent" class="text-4xl font-bold text-emerald-600 mt-2">100%</p>
+            <p class="text-sm text-gray-500" data-ar="نسبة النجاح" data-en="Success Rate">نسبة النجاح</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-xl mb-6">
+            <h3 class="font-bold text-lg mb-4 text-gray-800" data-ar="📈 تفصيل الأداء حسب القسم:" data-en="📈 Performance Breakdown:">📈 تفصيل الأداء حسب القسم:</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center"><span class="text-gray-700" data-ar="الإزاحة الزاوية" data-en="Angular Displacement">الإزاحة الزاوية</span><span id="sec1-score" class="font-bold text-teal-600">0/4</span></div>
+                <div class="flex justify-between items-center"><span class="text-gray-700" data-ar="السرعة الزاوية" data-en="Angular Velocity">السرعة الزاوية</span><span id="sec2-score" class="font-bold text-teal-600">0/4</span></div>
+                <div class="flex justify-between items-center"><span class="text-gray-700" data-ar="العجلة المركزية" data-en="Centripetal Acceleration">العجلة المركزية</span><span id="sec3-score" class="font-bold text-teal-600">0/4</span></div>
+                <div class="flex justify-between items-center"><span class="text-gray-700" data-ar="العجلة المماسية" data-en="Tangential Acceleration">العجلة المماسية</span><span id="sec4-score" class="font-bold text-teal-600">0/4</span></div>
+                <div class="flex justify-between items-center"><span class="text-gray-700" data-ar="التطبيقات العملية" data-en="Practical Applications">التطبيقات العملية</span><span id="sec5-score" class="font-bold text-teal-600">0/4</span></div>
+            </div>
+        </div>
+        <div class="text-center mb-6">
+            <button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white text-lg px-8 py-3 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="📧 إرسال النتائج للمعلم" data-en="📧 Send Results to Teacher">📧 إرسال النتائج للمعلم</button>
+            <p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
+        </div>
+        <div class="flex gap-3 justify-center">
+            <button onclick="window.print()" class="bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold" data-ar="🖨️ طباعة النتائج" data-en="🖨️ Print Results">🖨️ طباعة النتائج</button>
+        </div>
+    </div>
+
+    <footer class="max-w-4xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
+        © <span data-ar="الفيزياء للصف الحادي عشر متقدم - Inspire | الدرس 2.1: الحركة الدائرية" data-en="Grade 11 Advanced Physics - Inspire | Lesson 2.1: Circular Motion">الفيزياء للصف الحادي عشر متقدم - Inspire | الدرس 2.1: الحركة الدائرية</span> | Mr. Mohammed Hesham
+    </footer>
+
+<script>
+const examData = {
+    sections: [
+        {
+            id: 'sec1',
+            title: { ar: '🔹 الجزء الأول: الإزاحة الزاوية', en: '🔹 Part 1: Angular Displacement' },
+            questions: [
+                {
+                    q: { ar: 'الإزاحة الزاوية (θ) تقاس بـ:', en: 'Angular displacement (θ) is measured in:' },
+                    options: [
+                        { ar: 'المتر', en: 'Meters' },
+                        { ar: 'الراديان', en: 'Radians' },
+                        { ar: 'الثانية', en: 'Seconds' },
+                        { ar: 'm/s', en: 'm/s' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'الراديان هو وحدة قياس الإزاحة الزاوية', en: 'Radians are the unit for angular displacement' }
+                },
+                {
+                    q: { ar: 'الراديان الواحد يساوي تقريباً:', en: 'One radian equals approximately:' },
+                    options: [
+                        { ar: '180°', en: '180°' },
+                        { ar: '57.3°', en: '57.3°' },
+                        { ar: '360°', en: '360°' },
+                        { ar: '90°', en: '90°' }
+                    ],
+                    correct: 1,
+                    answer: { ar: '1 rad = 180°/π ≈ 57.3°', en: '1 rad = 180°/π ≈ 57.3°' }
+                },
+                {
+                    q: { ar: 'الدورة الكاملة (360°) تساوي:', en: 'A full rotation (360°) equals:' },
+                    options: [
+                        { ar: 'π rad', en: 'π rad' },
+                        { ar: '2π rad', en: '2π rad' },
+                        { ar: 'π/2 rad', en: 'π/2 rad' },
+                        { ar: '4π rad', en: '4π rad' }
+                    ],
+                    correct: 1,
+                    answer: { ar: '360° = 2π rad', en: '360° = 2π rad' }
+                },
+                {
+                    q: { ar: 'الإزاحة الزاوية لجسم يدور نصف دورة تساوي:', en: 'Angular displacement for half a rotation equals:' },
+                    options: [
+                        { ar: 'π rad', en: 'π rad' },
+                        { ar: '2π rad', en: '2π rad' },
+                        { ar: 'π/2 rad', en: 'π/2 rad' },
+                        { ar: '0 rad', en: '0 rad' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'نصف دورة = 180° = π rad', en: 'Half rotation = 180° = π rad' }
+                }
+            ]
+        },
+        {
+            id: 'sec2',
+            title: { ar: '🔹 الجزء الثاني: السرعة الزاوية', en: '🔹 Part 2: Angular Velocity' },
+            questions: [
+                {
+                    q: { ar: 'السرعة الزاوية (ω) تعرف بأنها:', en: 'Angular velocity (ω) is defined as:' },
+                    options: [
+                        { ar: 'التغير في الإزاحة الزاوية مع الزمن', en: 'Change in angular displacement with time' },
+                        { ar: 'التغير في السرعة الخطية', en: 'Change in linear velocity' },
+                        { ar: 'المسافة المقطوعة', en: 'Distance traveled' },
+                        { ar: 'التسارع الزاوي', en: 'Angular acceleration' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'ω = Δθ/Δt', en: 'ω = Δθ/Δt' }
+                },
+                {
+                    q: { ar: 'وحدة السرعة الزاوية في النظام الدولي هي:', en: 'The SI unit of angular velocity is:' },
+                    options: [
+                        { ar: 'm/s', en: 'm/s' },
+                        { ar: 'rad/s', en: 'rad/s' },
+                        { ar: 'deg/s', en: 'deg/s' },
+                        { ar: 'rev/min', en: 'rev/min' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'rad/s (راديان/ثانية)', en: 'rad/s (radians per second)' }
+                },
+                {
+                    q: { ar: 'العلاقة بين السرعة الخطية والسرعة الزاوية هي:', en: 'The relationship between linear and angular velocity is:' },
+                    options: [
+                        { ar: 'v = rω', en: 'v = rω' },
+                        { ar: 'v = ω/r', en: 'v = ω/r' },
+                        { ar: 'v = r/ω', en: 'v = r/ω' },
+                        { ar: 'v = ω²r', en: 'v = ω²r' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'السرعة الخطية = نصف القطر × السرعة الزاوية', en: 'Linear velocity = radius × angular velocity' }
+                },
+                {
+                    q: { ar: 'جسم يدور بسرعة زاوية 10 rad/s ونصف قطر 2 m، سرعته الخطية:', en: 'An object rotating at 10 rad/s with radius 2 m, its linear velocity:' },
+                    options: [
+                        { ar: '5 m/s', en: '5 m/s' },
+                        { ar: '20 m/s', en: '20 m/s' },
+                        { ar: '12 m/s', en: '12 m/s' },
+                        { ar: '100 m/s', en: '100 m/s' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'v = rω = 2 × 10 = 20 m/s', en: 'v = rω = 2 × 10 = 20 m/s' }
+                }
+            ]
+        },
+        {
+            id: 'sec3',
+            title: { ar: '🔹 الجزء الثالث: العجلة المركزية', en: '🔹 Part 3: Centripetal Acceleration' },
+            questions: [
+                {
+                    q: { ar: 'العجلة المركزية (a_c) تتجه دائماً:', en: 'Centripetal acceleration (a_c) always points:' },
+                    options: [
+                        { ar: 'في اتجاه الحركة', en: 'In the direction of motion' },
+                        { ar: 'نحو مركز الدائرة', en: 'Toward the center of the circle' },
+                        { ar: 'بعيداً عن المركز', en: 'Away from the center' },
+                        { ar: 'عمودياً على المستوى', en: 'Perpendicular to the plane' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'العجلة المركزية تتجه دائماً نحو المركز', en: 'Centripetal acceleration always points toward the center' }
+                },
+                {
+                    q: { ar: 'صيغة العجلة المركزية هي:', en: 'The formula for centripetal acceleration is:' },
+                    options: [
+                        { ar: 'a_c = v/r', en: 'a_c = v/r' },
+                        { ar: 'a_c = v²/r', en: 'a_c = v²/r' },
+                        { ar: 'a_c = vr', en: 'a_c = vr' },
+                        { ar: 'a_c = r/v', en: 'a_c = r/v' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'a_c = v²/r = ω²r', en: 'a_c = v²/r = ω²r' }
+                },
+                {
+                    q: { ar: 'سيارة تدور في مسار دائري نصف قطره 50 m بسرعة 20 m/s، العجلة المركزية:', en: 'A car moving in a circular path of radius 50 m at 20 m/s, centripetal acceleration:' },
+                    options: [
+                        { ar: '4 m/s²', en: '4 m/s²' },
+                        { ar: '8 m/s²', en: '8 m/s²' },
+                        { ar: '10 m/s²', en: '10 m/s²' },
+                        { ar: '0.4 m/s²', en: '0.4 m/s²' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'a_c = v²/r = 400/50 = 8 m/s²', en: 'a_c = v²/r = 400/50 = 8 m/s²' }
+                },
+                {
+                    q: { ar: 'إذا تضاعفت السرعة في الحركة الدائرية، فإن العجلة المركزية:', en: 'If velocity doubles in circular motion, centripetal acceleration:' },
+                    options: [
+                        { ar: 'تتضاعف', en: 'Doubles' },
+                        { ar: 'تزداد 4 أضعاف', en: 'Increases 4 times' },
+                        { ar: 'تقل للنصف', en: 'Halves' },
+                        { ar: 'تبقى ثابتة', en: 'Remains constant' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'a_c ∝ v²، إذن تتضاعف 4 مرات', en: 'a_c ∝ v², so it increases 4 times' }
+                }
+            ]
+        },
+        {
+            id: 'sec4',
+            title: { ar: '🔹 الجزء الرابع: العجلة المماسية', en: '🔹 Part 4: Tangential Acceleration' },
+            questions: [
+                {
+                    q: { ar: 'العجلة المماسية (a_t) تنتج عن:', en: 'Tangential acceleration (a_t) results from:' },
+                    options: [
+                        { ar: 'تغير اتجاه السرعة', en: 'Change in velocity direction' },
+                        { ar: 'تغير مقدار السرعة', en: 'Change in velocity magnitude' },
+                        { ar: 'تغير نصف القطر', en: 'Change in radius' },
+                        { ar: 'تغير الكتلة', en: 'Change in mass' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'العجلة المماسية تنتج عن تغير مقدار السرعة', en: 'Tangential acceleration results from change in speed' }
+                },
+                {
+                    q: { ar: 'العلاقة بين العجلة المماسية والعجلة الزاوية هي:', en: 'The relationship between tangential and angular acceleration is:' },
+                    options: [
+                        { ar: 'a_t = α/r', en: 'a_t = α/r' },
+                        { ar: 'a_t = rα', en: 'a_t = rα' },
+                        { ar: 'a_t = αr²', en: 'a_t = αr²' },
+                        { ar: 'a_t = r/α', en: 'a_t = r/α' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'a_t = rα', en: 'a_t = rα' }
+                },
+                {
+                    q: { ar: 'في الحركة الدائرية المنتظمة:', en: 'In uniform circular motion:' },
+                    options: [
+                        { ar: 'a_t = 0 و a_c ≠ 0', en: 'a_t = 0 and a_c ≠ 0' },
+                        { ar: 'a_t ≠ 0 و a_c = 0', en: 'a_t ≠ 0 and a_c = 0' },
+                        { ar: 'a_t = 0 و a_c = 0', en: 'a_t = 0 and a_c = 0' },
+                        { ar: 'a_t ≠ 0 و a_c ≠ 0', en: 'a_t ≠ 0 and a_c ≠ 0' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'في الحركة المنتظمة: السرعة ثابتة (a_t=0) لكن الاتجاه يتغير (a_c≠0)', en: 'In uniform motion: speed constant (a_t=0) but direction changes (a_c≠0)' }
+                },
+                {
+                    q: { ar: 'العجلة الكلية في الحركة الدائرية تساوي:', en: 'Total acceleration in circular motion equals:' },
+                    options: [
+                        { ar: 'a = a_t + a_c', en: 'a = a_t + a_c' },
+                        { ar: 'a = √(a_t² + a_c²)', en: 'a = √(a_t² + a_c²)' },
+                        { ar: 'a = a_t - a_c', en: 'a = a_t - a_c' },
+                        { ar: 'a = a_t × a_c', en: 'a = a_t × a_c' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'العجلتان متعامدتان، إذن a = √(a_t² + a_c²)', en: 'The accelerations are perpendicular, so a = √(a_t² + a_c²)' }
+                }
+            ]
+        },
+        {
+            id: 'sec5',
+            title: { ar: '🔹 الجزء الخامس: التطبيقات العملية', en: '🔹 Part 5: Practical Applications' },
+            questions: [
+                {
+                    q: { ar: 'الأرض تدور حول محورها بسرعة زاوية تقريباً:', en: 'Earth rotates about its axis with angular velocity approximately:' },
+                    options: [
+                        { ar: '7.27 × 10⁻⁵ rad/s', en: '7.27 × 10⁻⁵ rad/s' },
+                        { ar: '1.99 × 10⁻⁷ rad/s', en: '1.99 × 10⁻⁷ rad/s' },
+                        { ar: '2π rad/s', en: '2π rad/s' },
+                        { ar: '10 rad/s', en: '10 rad/s' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'ω = 2π/(24×3600) ≈ 7.27 × 10⁻⁵ rad/s', en: 'ω = 2π/(24×3600) ≈ 7.27 × 10⁻⁵ rad/s' }
+                },
+                {
+                    q: { ar: 'جسم على خط الاستواء (R = 6.37 × 10⁶ m)، سرعته الخطية بسبب دوران الأرض:', en: 'An object at the equator (R = 6.37 × 10⁶ m), its linear velocity due to Earth\'s rotation:' },
+                    options: [
+                        { ar: '464 m/s', en: '464 m/s' },
+                        { ar: '1000 m/s', en: '1000 m/s' },
+                        { ar: '100 m/s', en: '100 m/s' },
+                        { ar: '10,000 m/s', en: '10,000 m/s' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'v = Rω = (6.37×10⁶)(7.27×10⁻⁵) ≈ 464 m/s', en: 'v = Rω = (6.37×10⁶)(7.27×10⁻⁵) ≈ 464 m/s' }
+                },
+                {
+                    q: { ar: 'الأرض تدور حول الشمس بسرعة زاوية:', en: 'Earth orbits the Sun with angular velocity:' },
+                    options: [
+                        { ar: '7.27 × 10⁻⁵ rad/s', en: '7.27 × 10⁻⁵ rad/s' },
+                        { ar: '1.99 × 10⁻⁷ rad/s', en: '1.99 × 10⁻⁷ rad/s' },
+                        { ar: '2π rad/s', en: '2π rad/s' },
+                        { ar: '10⁻¹⁰ rad/s', en: '10⁻¹⁰ rad/s' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'ω = 2π/(365.25×24×3600) ≈ 1.99 × 10⁻⁷ rad/s', en: 'ω = 2π/(365.25×24×3600) ≈ 1.99 × 10⁻⁷ rad/s' }
+                },
+                {
+                    q: { ar: 'جهاز الطرد المركزي (Centrifuge) يدور بسرعة 100,000 rev/min، السرعة الزاوية بـ rad/s:', en: 'A centrifuge rotates at 100,000 rev/min, angular velocity in rad/s:' },
+                    options: [
+                        { ar: '1,047 rad/s', en: '1,047 rad/s' },
+                        { ar: '10,472 rad/s', en: '10,472 rad/s' },
+                        { ar: '100,000 rad/s', en: '100,000 rad/s' },
+                        { ar: '1,667 rad/s', en: '1,667 rad/s' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'ω = 100,000 × 2π/60 ≈ 10,472 rad/s', en: 'ω = 100,000 × 2π/60 ≈ 10,472 rad/s' }
+                }
+            ]
+        }
+    ]
+};
+
+let currentLang = 'ar';
+let timeRemaining = 3600;
+let timerInterval;
+
+function setLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.body.classList.toggle('en-mode', lang === 'en');
+    document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+        el.textContent = el.getAttribute(`data-${lang}`);
+    });
+    renderExam();
+}
+
+function renderExam() {
+    const container = document.getElementById('exam-content');
+    const labels = {
+        ar: { option: ['أ', 'ب', 'ج', 'د'], answer: '✅ الإجابة:' },
+        en: { option: ['A', 'B', 'C', 'D'], answer: '✅ Answer:' }
+    };
+    const lbl = labels[currentLang];
+    const isRTL = currentLang === 'ar';
+
+    let html = '';
+    let globalIdx = 1;
+
+    examData.sections.forEach((section) => {
+        html += `<section class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-xl font-bold mb-4 text-teal-700">${section.title[currentLang]}</h2>
+            <ol class="space-y-4 text-sm">`;
+
+        section.questions.forEach((q) => {
+            const borderSide = isRTL ? 'border-r-4 pr-4' : 'border-l-4 pl-4';
+            html += `<li class="${borderSide} border-teal-500 py-2" id="q-${globalIdx}">
+                <strong>${globalIdx}.</strong> ${q.q[currentLang]}<br>`;
+
+            q.options.forEach((opt, oIdx) => {
+                const radioSide = isRTL ? 'mr-4 ml-2' : 'ml-4 mr-2';
+                html += `<label class="cursor-pointer block mt-1 ${isRTL ? 'mr-4' : 'ml-4'}">
+                    <input type="radio" name="q${globalIdx}" value="${String.fromCharCode(97 + oIdx)}" class="${radioSide}">
+                    ${lbl.option[oIdx]}) ${opt[currentLang]}
+                </label>`;
+            });
+
+            html += `<div class="answer-box text-green-700 mt-2 font-medium hidden">
+                ${lbl.answer} ${lbl.option[q.correct]}) ${q.options[q.correct][currentLang]} — ${q.answer[currentLang]}
+            </div></li>`;
+            globalIdx++;
+        });
+
+        html += `</ol></section>`;
+    });
+
+    container.innerHTML = html;
+}
+
+function startTimer() {
+    document.getElementById('timer-container').style.display = 'block';
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        const timerEl = document.getElementById('timer');
+        timerEl.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+        if (timeRemaining <= 300) timerEl.classList.add('timer-warning');
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert(currentLang === 'ar' ? "انتهى الوقت! سيتم تسليم الامتحان تلقائياً." : "Time's up!");
+            gradeExam();
+        }
+    }, 1000);
+}
+
+function toggleAnswers() {
+    document.querySelectorAll('.answer-box').forEach(el => el.classList.toggle('hidden'));
+}
+
+function gradeExam() {
+    let correctCount = 0;
+    const correctAnswersLetters = ['b','b','b','a','a','b','a','b','b','b','b','b','b','b','a','b','a','a','b','b'];
+    let sec1=0, sec2=0, sec3=0, sec4=0, sec5=0;
+
+    for (let i = 1; i <= 20; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const li = document.getElementById(`q-${i}`);
+        const isCorrect = selected && selected.value === correctAnswersLetters[i-1];
+
+        if (isCorrect) {
+            correctCount++;
+            li.classList.add('correct');
+            li.classList.remove('incorrect');
+            if (i <= 4) sec1++;
+            else if (i <= 8) sec2++;
+            else if (i <= 12) sec3++;
+            else if (i <= 16) sec4++;
+            else sec5++;
+        } else {
+            li.classList.add('incorrect');
+            li.classList.remove('correct');
+        }
+    }
+
+    const score = (correctCount / 20) * 100;
+    const successRate = Math.round(score);
+
+    document.getElementById('res-total').textContent = `${Math.round(score)} / 100`;
+    document.getElementById('res-name').textContent = document.getElementById('studentName').value || (currentLang === 'ar' ? 'طالب' : 'Student');
+    document.getElementById('res-date').textContent = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
+    document.getElementById('sec1-score').textContent = `${sec1}/4`;
+    document.getElementById('sec2-score').textContent = `${sec2}/4`;
+    document.getElementById('sec3-score').textContent = `${sec3}/4`;
+    document.getElementById('sec4-score').textContent = `${sec4}/4`;
+    document.getElementById('sec5-score').textContent = `${sec5}/4`;
+
+    const badge = document.getElementById('success-badge');
+    document.getElementById('success-percent').textContent = `${successRate}%`;
+
+    if (currentLang === 'ar') {
+        if (successRate >= 90) { badge.textContent = 'ممتاز'; badge.className = 'success-badge grade-excellent'; }
+        else if (successRate >= 75) { badge.textContent = 'جيد جداً'; badge.className = 'success-badge grade-good'; }
+        else if (successRate >= 50) { badge.textContent = 'جيد'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = 'يحتاج تحسين'; badge.className = 'success-badge grade-fail'; }
+    } else {
+        if (successRate >= 90) { badge.textContent = 'Excellent'; badge.className = 'success-badge grade-excellent'; }
+        else if (successRate >= 75) { badge.textContent = 'Very Good'; badge.className = 'success-badge grade-good'; }
+        else if (successRate >= 50) { badge.textContent = 'Good'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = 'Needs Improvement'; badge.className = 'success-badge grade-fail'; }
+    }
+
+    document.getElementById('results-panel').classList.remove('hidden');
+    document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('sendEmailBtn').classList.remove('hidden');
+}
+
+function sendResultsToEmail() {
+    const btn = document.getElementById('sendEmailBtn');
+    const status = document.getElementById('emailStatus');
+    btn.disabled = true;
+    btn.textContent = currentLang === 'ar' ? '⏳ جاري الإرسال...' : '⏳ Sending...';
+
+    const name = document.getElementById('studentName').value || 'N/A';
+    const studentClass = document.getElementById('studentClass').value || 'N/A';
+    const date = document.querySelector('input[type="text"]').value || new Date().toLocaleDateString();
+    const score = document.getElementById('res-total').textContent;
+    const successRate = document.getElementById('success-percent').textContent;
+
+    const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
+    const SERVICE_ID = "service_w15m64i";
+    const TEMPLATE_ID = "template_5b0u2tq";
+    const TARGET_EMAIL = "mohammedhesham872@gmail.com";
+
+    emailjs.init(PUBLIC_KEY);
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+        to_email: TARGET_EMAIL, student_name: name, exam_date: date,
+        total_score: score, success_rate: successRate,
+        answers_table: `Score: ${score}, Rate: ${successRate}`
+    }).then(() => {
+        status.textContent = '✅ تم الإرسال بنجاح!';
+        status.style.color = '#059669';
+    }).catch(err => {
+        status.textContent = '❌ فشل الإرسال';
+        status.style.color = '#dc2626';
+        btn.disabled = false;
+    });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    renderExam();
+    startTimer();
+});
+</script>
+</body>
+</html>
